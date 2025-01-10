@@ -11,12 +11,14 @@ local acadia_trees_locations = {
     }
 }
 
+local animating = false
+
 API.SetDrawTrackedSkills(true)
 
 local function get_available_acadia_tree()
     local objs = API.ReadAllObjectsArray({ UTILS.OBJECT_TYPES.OBJECT }, { acadia_tree_id }, {})
     for _, obj in ipairs(objs) do
-        if obj.Bool1 == 0 then
+        if obj.Bool1 == 0 then -- this means the tree is a valid object to interact
             local x = math.floor(obj.Tile_XYZ.x)
             local y = math.floor(obj.Tile_XYZ.y)
             if acadia_trees_locations[x] and acadia_trees_locations[x][y] then
@@ -69,19 +71,25 @@ while (API.Read_LoopyLoop()) do
                 print("Player is not animating")
                 local acadia_tree = get_available_acadia_tree()
                 if acadia_tree then
-                    print("Found a tree, let's try to chop it")
-                    API.DoAction_Object_Direct(0x3b, API.OFF_ACT_GeneralObject_route0, acadia_tree)
-                    UTILS.wait_for_condition(function()
-                        print("Waiting for player to start animating")
-                        return UTILS.is_local_player_animating() or acadia_tree == nil
-                    end, function()
-                        return API.ReadPlayerMovin()
-                    end, UTILS.random_float(1.8, 3)
-                    )
+                    if not animating or acadia_tree.Distance >= 2 then
+                        print("Found a tree, let's try to chop it")
+                        API.DoAction_Object_Direct(0x3b, API.OFF_ACT_GeneralObject_route0, acadia_tree)
+                        UTILS.wait_for_condition(function()
+                            print("Waiting for player to start animating")
+                            return UTILS.is_local_player_animating() or acadia_tree == nil
+                        end, function()
+                            return API.ReadPlayerMovin()
+                        end, UTILS.random_float(1.8, 3)
+                        )
+                    elseif animating and acadia_tree.Distance < 2 then
+                        print("This tree was cut down but hasn't disappeared yet, let's wait.")
+                    end
+                    animating = false
                 else
                     print("Tree not found")
                 end
             else
+                animating = true
                 print("Looks like we are animating")
             end
         end
