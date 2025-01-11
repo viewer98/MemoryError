@@ -63,7 +63,8 @@ end
 function UTILS:anti_idle()
     math.randomseed(os.time())
     local time_diff = os.difftime(os.time(), self.afk)
-    local random_time = math.random((MAX_IDLE_TIME_MINUTES * 60) * 0.6, (MAX_IDLE_TIME_MINUTES * 60) * 0.9)
+    local max_idle_time_minutes = MAX_IDLE_TIME_MINUTES * 60
+    local random_time = math.random(max_idle_time_minutes * 0.4, max_idle_time_minutes * 0.8)
     if time_diff > random_time then
         API.PIdle2()
         self.afk = os.time()
