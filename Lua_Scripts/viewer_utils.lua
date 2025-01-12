@@ -12,28 +12,28 @@ function UTILS.new()
 end
 
 UTILS.KEY_CODES = {
-    ZERO = 48,
-    ONE = 49,
-    TWO = 50,
-    THREE = 51,
-    FOUR = 52,
-    FIVE = 53,
-    SIX = 54,
-    SEVEN = 55,
-    EIGHT = 56,
-    NINE = 57,
-    ENTER = 17,
-    SPACE = 32,
-    DOT = 46,
-    HYPHEN = 45,
-    PLUS = 43,
-    COMMA = 44,
-    EQUALS = 61,
-    OPEN_BRACKET = 91,
+    ZERO          = 48,
+    ONE           = 49,
+    TWO           = 50,
+    THREE         = 51,
+    FOUR          = 52,
+    FIVE          = 53,
+    SIX           = 54,
+    SEVEN         = 55,
+    EIGHT         = 56,
+    NINE          = 57,
+    ENTER         = 17,
+    SPACE         = 32,
+    DOT           = 46,
+    HYPHEN        = 45,
+    PLUS          = 43,
+    COMMA         = 44,
+    EQUALS        = 61,
+    OPEN_BRACKET  = 91,
     CLOSE_BRACKET = 93,
-    SLASH  = 47,
-    BACKSLASH = 92,
-    SEMICOLON = 59
+    SLASH         = 47,
+    BACKSLASH     = 92,
+    SEMICOLON     = 59
 }
 
 UTILS.OBJECT_TYPES = {
@@ -44,11 +44,43 @@ UTILS.OBJECT_TYPES = {
     HIGHLIGHT = 4,
     PROJECTILE = 5,
     TILE = 8,
-    WALL_TILE = 12,
+    DECORATION = 12,
     ALL = -1
 }
 
+UTILS.WOOD_BOX_IDS = {
+    ETERNAL_MAGIC = 58253
+}
+
+UTILS.LOG_IDS = {
+    ACADIA = 40285
+}
+
+UTILS.QUEUED_ABILITY_BAR_VALUE = {
+    NO_ABILITY_QUEUED = 0,
+    MAIN_ACTION_BAR = 1003,
+    FIRST_ADDITIONAL_BAR = 1032,
+    SECOND_ADDITIONAL_BAR = 1033,
+    THIRD_ADDITIONAL_BAR = 1034,
+    FOURTH_ADDITIONAL_BAR = 1035
+}
+
+function UTILS.is_ability_queuing_enabled()
+    return API.VB_FindPSett(627, 0).state & 512 == 0
+end
+
 local MAX_IDLE_TIME_MINUTES = 5
+
+function UTILS.get_woodbox_item_count(item_id)
+    local container_items = API.Container_Get_all(937)
+    local item_count = 0
+    for _, item_data in pairs(container_items) do
+        if item_data.item_id == item_id then
+            item_count = item_count + item_data.item_stack
+        end
+    end
+    return item_count
+end
 
 function UTILS.get_formatted_memory_usage()
     local memory_kb = collectgarbage("count")
