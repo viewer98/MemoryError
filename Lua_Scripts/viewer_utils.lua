@@ -48,20 +48,6 @@ UTILS.OBJECT_TYPES = {
     ALL = -1
 }
 
-UTILS.WOOD_BOX_IDS = {
-    REGULAR = 54895,
-    OAK = 54897,
-    WILLOW = 54899,
-    TEAK = 54901,
-    MAPLE = 54903,
-    ACADIA = 54905,
-    MAHOGANY = 54907,
-    YEW = 54909,
-    MAGIC = 54911,
-    ELDER = 54913,
-    ETERNAL_MAGIC = 58253
-}
-
 UTILS.LOG_IDS = {
     ACADIA = 40285
 }
@@ -77,22 +63,39 @@ UTILS.QUEUED_ABILITY_BAR_VALUE = {
 
 local MAX_IDLE_TIME_MINUTES = 5
 
-local WOOD_BOX_INITIAL_CAPACITIES = {
-    [UTILS.WOOD_BOX_IDS.REGULAR] = 70,
-    [UTILS.WOOD_BOX_IDS.OAK] = 80,
-    [UTILS.WOOD_BOX_IDS.WILLOW] = 90,
-    [UTILS.WOOD_BOX_IDS.TEAK] = 100,
-    [UTILS.WOOD_BOX_IDS.MAPLE] = 110,
-    [UTILS.WOOD_BOX_IDS.ACADIA] = 120,
-    [UTILS.WOOD_BOX_IDS.MAHOGANY] = 130,
-    [UTILS.WOOD_BOX_IDS.YEW] = 140,
-    [UTILS.WOOD_BOX_IDS.MAGIC] = 160,
-    [UTILS.WOOD_BOX_IDS.ELDER] = 160,
-    [UTILS.WOOD_BOX_IDS.ETERNAL_MAGIC] = 170,
+UTILS.WoodBox = {
+    CONTAINER_ID = 937,
+    IDS = {
+        REGULAR = 54895,
+        OAK = 54897,
+        WILLOW = 54899,
+        TEAK = 54901,
+        MAPLE = 54903,
+        ACADIA = 54905,
+        MAHOGANY = 54907,
+        YEW = 54909,
+        MAGIC = 54911,
+        ELDER = 54913,
+        ETERNAL_MAGIC = 58253
+    }
 }
 
-function UTILS.get_wood_box_current_capacity_per_item(wood_box_id)
-    local current_wc_level = UTILS.get_current_level("WOODCUTTING")
+UTILS.WoodBox.INITIAL_CAPACITIES = {
+    [UTILS.WoodBox.IDS.REGULAR] = 70,
+    [UTILS.WoodBox.IDS.OAK] = 80,
+    [UTILS.WoodBox.IDS.WILLOW] = 90,
+    [UTILS.WoodBox.IDS.TEAK] = 100,
+    [UTILS.WoodBox.IDS.MAPLE] = 110,
+    [UTILS.WoodBox.IDS.ACADIA] = 120,
+    [UTILS.WoodBox.IDS.MAHOGANY] = 130,
+    [UTILS.WoodBox.IDS.YEW] = 140,
+    [UTILS.WoodBox.IDS.MAGIC] = 160,
+    [UTILS.WoodBox.IDS.ELDER] = 160,
+    [UTILS.WoodBox.IDS.ETERNAL_MAGIC] = 170,
+}
+
+function UTILS.WoodBox.get_current_capacity_per_item(wood_box_id)
+    local current_wc_level = API.GetSkillByName("WOODCUTTING").level
     local total_number_increments = 0
 
     if current_wc_level < 5 then
@@ -103,19 +106,11 @@ function UTILS.get_wood_box_current_capacity_per_item(wood_box_id)
         total_number_increments = ((current_wc_level - 5) // 10) + 1
     end
 
-    return WOOD_BOX_INITIAL_CAPACITIES[wood_box_id] + (total_number_increments * 10)
+    return UTILS.WoodBox.WOOD_BOX_INITIAL_CAPACITIES[wood_box_id] + (total_number_increments * 10)
 end
 
-function UTILS.get_current_level(skill_name)
-    return API.GetSkillByName(skill_name).level
-end
-
-function UTILS.is_ability_queuing_enabled()
-    return API.VB_FindPSett(627, 0).state & 512 == 0
-end
-
-function UTILS.get_wood_box_item_count(item_id)
-    local container_items = API.Container_Get_all(937)
+function UTILS.WoodBox.get_item_count(item_id)
+    local container_items = API.Container_Get_all(UTILS.WoodBox.CONTAINER_ID)
     local item_count = 0
     for _, item_data in pairs(container_items) do
         if item_data.item_id == item_id then
@@ -126,8 +121,8 @@ function UTILS.get_wood_box_item_count(item_id)
     return item_count
 end
 
-function UTILS.count_wood_box_individual_items()
-    local container_items = API.Container_Get_all(937)
+function UTILS.WoodBox.count_unique_items()
+    local container_items = API.Container_Get_all(UTILS.WoodBox.CONTAINER_ID)
     local item_count = 0
     for _, item_data in pairs(container_items) do
         if item_data.item_id > 0 then
@@ -135,6 +130,14 @@ function UTILS.count_wood_box_individual_items()
         end
     end
     return item_count
+end
+
+function UTILS.get_current_level(skill_name)
+    return API.GetSkillByName(skill_name).level
+end
+
+function UTILS.is_ability_queuing_enabled()
+    return API.VB_FindPSett(627, 0).state & 512 == 0
 end
 
 function UTILS.get_formatted_memory_usage()

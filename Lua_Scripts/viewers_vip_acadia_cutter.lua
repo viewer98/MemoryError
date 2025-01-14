@@ -15,7 +15,7 @@ local acadia_trees_locations = {
 
 API.SetDrawTrackedSkills(true)
 
-for key, wbox_id in pairs(UTILS.WOOD_BOX_IDS) do
+for key, wbox_id in pairs(UTILS.WoodBox.IDS) do
     if Inventory:Contains(wbox_id) then
         wood_box_id = wbox_id
         print("Found a wood box: ", key)
@@ -24,7 +24,7 @@ for key, wbox_id in pairs(UTILS.WOOD_BOX_IDS) do
 end
 
 if wood_box_id > 0 then
-    wood_box_capacity_per_item = UTILS.get_wood_box_current_capacity_per_item(wood_box_id)
+    wood_box_capacity_per_item = UTILS.WoodBox.get_current_capacity_per_item(wood_box_id)
     print("Wood box capacity per item: ", tostring(wood_box_capacity_per_item))
 end
 
@@ -71,7 +71,7 @@ local function get_current_state()
             print("Bank is open")
             if wood_box_id > 0 then
                 print("We have a wood box")
-                if UTILS.count_wood_box_individual_items() > 0 then
+                if UTILS.WoodBox.count_unique_items() > 0 then
                     print("We need to empty the wood box into the bank")
                     return SCRIPT_STATE.EMPTYING_WOOD_BOX
                 elseif Inventory:Contains(UTILS.LOG_IDS.ACADIA) then
@@ -99,7 +99,7 @@ local function get_current_state()
                     print("Inventory is full")
                     if wood_box_id > 0 then
                         print("We have a wood box")
-                        if UTILS.get_wood_box_item_count(UTILS.LOG_IDS.ACADIA) >= wood_box_capacity_per_item then
+                        if UTILS.WoodBox.get_item_count(UTILS.LOG_IDS.ACADIA) >= wood_box_capacity_per_item then
                             print("Wood box is full, we need to open the bank")
                             return SCRIPT_STATE.OPENING_BANK
                         else
