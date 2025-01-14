@@ -106,7 +106,7 @@ function UTILS.WoodBox.get_current_capacity_per_item(wood_box_id)
         total_number_increments = ((current_wc_level - 5) // 10) + 1
     end
 
-    return UTILS.WoodBox.WOOD_BOX_INITIAL_CAPACITIES[wood_box_id] + (total_number_increments * 10)
+    return UTILS.WoodBox.INITIAL_CAPACITIES[wood_box_id] + (total_number_increments * 10)
 end
 
 function UTILS.WoodBox.get_item_count(item_id)
